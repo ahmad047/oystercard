@@ -23,14 +23,39 @@ describe OysterCard do
     end
   end
 
-    
   context "#deduct" do
     it 'deducts the balance' do
       subject.top_up(50)
       expect { subject.deduct(25) }.to change { subject.balance }.by(-25)
     end
   end
+
+  context '#in_journey?' do
+    it 'starts off false before touch in' do
+      expect(subject.in_journey?).to eq(false)
+    end
+  end 
+  
+  context '#touch_in' do
+    it { is_expected.to respond_to(:touch_in) }
+
+    it 'changes the value of in_journey to true' do
+      subject.touch_in
+      expect(subject.in_journey?).to be true
+    end 
+  end 
+
+  context '#touch_out' do
+    it { is_expected.to respond_to(:touch_out) }
+
+    it 'changes the value of in_journey back to false' do
+      subject.touch_in
+      subject.touch_out
+      expect(subject.in_journey?).to be false
+    end 
+  end
 end
+
 
 
 
