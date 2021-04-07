@@ -20,11 +20,17 @@ describe OysterCard do
 
     it 'raises an error when max_limit reached' do
       maximum_limit = OysterCard::MAXIMUM_LIMIT
-      subject.top_up maximum_limit
+      subject.top_up(maximum_limit)
       expect { subject.top_up 1 }.to raise_error "Max limit of #{maximum_limit}, cannot top-up"
     end
   end
 
+
+end
+
+
+
+# redundant tests
   # describe '#max_limit?' do
 
   #   it 'returns false when max_limit not reached' do
@@ -34,7 +40,7 @@ describe OysterCard do
     # it 'returns true when max_limit reached' do
     #   card = subject
     #   card.top_up(90)
+    #   card.top_up(1)
     #   expect(card.max_limit?).to be(true)
     # end
   # end
-end

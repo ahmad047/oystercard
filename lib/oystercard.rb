@@ -8,11 +8,13 @@ class OysterCard
   end
 
   def top_up(amount)
-    fail "Max limit of #{MAXIMUM_LIMIT}, cannot top-up" if amount + balance > MAXIMUM_LIMIT
+    fail "Max limit of #{MAXIMUM_LIMIT}, cannot top-up" if max_limit?(amount)
     @balance += amount
   end
 
-  # def max_limit?
-  #   @balance > MAXIMUM_LIMIT
-  # end
+
+  private
+  def max_limit?(amount)
+    @balance + amount > MAXIMUM_LIMIT
+  end
 end
