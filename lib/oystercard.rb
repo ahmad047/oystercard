@@ -1,7 +1,7 @@
 class OysterCard
   MAXIMUM_LIMIT = 90
 
-  attr_reader :balance, :MAXIMUM_LIMIT
+  attr_accessor :balance, :MAXIMUM_LIMIT
 
   def initialize
     @balance = 0
@@ -12,6 +12,9 @@ class OysterCard
     @balance += amount
   end
 
+  def deduct(amount)
+    @balance -= amount
+  end
 
   private
   def max_limit?(amount)
