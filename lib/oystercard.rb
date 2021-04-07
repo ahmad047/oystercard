@@ -1,7 +1,8 @@
 class OysterCard
   MAXIMUM_LIMIT = 90
   MINIMUM_BALANCE = 1
-  attr_accessor :balance, :MAXIMUM_LIMIT
+  MIN_FARE = 1
+  attr_accessor :balance, :MAXIMUM_LIMIT, :MIN_FARE
 
   def initialize(in_journey = false)
     @balance = 0
@@ -11,10 +12,6 @@ class OysterCard
   def top_up(amount)
     fail "Max limit of #{MAXIMUM_LIMIT}, cannot top-up" if max_limit?(amount)
     @balance += amount
-  end
-
-  def deduct(amount)
-    @balance -= amount
   end
 
   def in_journey?
@@ -28,9 +25,9 @@ class OysterCard
   end 
 
   def touch_out
+    deduct(MIN_FARE)
     @in_journey = false
   end 
-
 
   private
   def max_limit?(amount)
@@ -39,5 +36,9 @@ class OysterCard
 
   def minimum_balance?
     @balance < MINIMUM_BALANCE
+  end
+
+  def deduct(amount)
+    @balance -= amount
   end
 end

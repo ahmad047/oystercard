@@ -23,13 +23,6 @@ describe OysterCard do
     end
   end
 
-  context "#deduct" do
-    it 'deducts the balance' do
-      subject.top_up(50)
-      expect { subject.deduct(25) }.to change { subject.balance }.by(-25)
-    end
-  end
-
   context '#in_journey?' do
     it 'starts off false before touch in' do
       expect(subject.in_journey?).to eq(false)
@@ -59,6 +52,12 @@ describe OysterCard do
       subject.touch_out
       expect(subject.in_journey?).to be false
     end 
+
+    it 'deducts the minimum charge from the card' do
+      allow(subject).to receive(:minimum_balance?).and_return false
+      subject.touch_in
+      expect { subject.touch_out }.to change { subject.balance }.by(-OysterCard::MIN_FARE)
+    end
   end
 end
 
@@ -78,4 +77,13 @@ end
     #   card.top_up(1)
     #   expect(card.max_limit?).to be(true)
     # end
+  # end
+
+
+
+  # context "#deduct" do
+  #   it 'deducts the balance' do
+  #     subject.top_up(50)
+  #     expect { subject.deduct(25) }.to change { subject.balance }.by(-25)
+  #   end
   # end
