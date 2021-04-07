@@ -20,7 +20,7 @@ class OysterCard
 
   def touch_in(station)
     raise 'not enough balance' if minimum_balance?
-    save_entry_station(station)
+    @entry_station = station
   end 
 
   def touch_out
@@ -39,9 +39,5 @@ class OysterCard
 
   def deduct(amount)
     @balance -= amount
-  end
-
-  def save_entry_station(station)
-    @entry_station = station
   end
 end
