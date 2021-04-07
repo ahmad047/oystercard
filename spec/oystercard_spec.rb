@@ -40,15 +40,21 @@ describe OysterCard do
     it { is_expected.to respond_to(:touch_in) }
 
     it 'changes the value of in_journey to true' do
+      allow(subject).to receive(:minimum_balance?).and_return false
       subject.touch_in
       expect(subject.in_journey?).to be true
     end 
+
+    it 'raises an error if balance is less than 1' do
+      expect { subject.touch_in }.to raise_error('not enough balance')
+    end
   end 
 
   context '#touch_out' do
     it { is_expected.to respond_to(:touch_out) }
 
     it 'changes the value of in_journey back to false' do
+      allow(subject).to receive(:minimum_balance?).and_return false
       subject.touch_in
       subject.touch_out
       expect(subject.in_journey?).to be false
