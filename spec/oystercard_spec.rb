@@ -2,9 +2,10 @@ require 'oystercard'
 
 describe OysterCard do
   let(:maximum_limit)    { OysterCard::MAXIMUM_LIMIT }
+  let(:minimum_fare)     { OysterCard::MIN_FARE }
   let(:entry_station)    { double :station }
   let(:exit_station)     { double :station }
-  let(:journey){ {entry_station: entry_station, exit_station: exit_station} }
+  let(:journey)          { {enter: entry_station, exit: exit_station} }
 
   describe '#balance' do
     it 'creates new card with 0 balance' do
@@ -26,43 +27,42 @@ describe OysterCard do
   end
 
   describe '#in_journey?' do
-    it 'starts off nil before touch in' do
-      expect(subject.in_journey?).to eq(false)
+    it 'starts off as false' do
+      expect(subject).not_to be_in_journey
     end
   end 
   
   describe '#touch_in' do
-    # before { subject.top_up(maximum_limit) }
+    before { subject.top_up(maximum_limit) }
     
     it 'changes the value of in_journey to true' do
-      allow(subject).to receive(:minimum_balance?).and_return false
       subject.touch_in(entry_station)
       expect(subject.in_journey?).to be true
     end 
 
-    it 'raises an error if balance is less than 1' do
-      expect { subject.touch_in(entry_station) }.to raise_error('not enough balance')
-    end
-
     it 'stores the value of entry_station' do
-      allow(subject).to receive(:minimum_balance?).and_return false
       subject.touch_in(entry_station)
       expect(subject.entry_station).to eq(entry_station)
     end
   end 
 
+  context 'raises an error if balance is less than 1' do
+    it { expect { subject.touch_in(entry_station) }.to raise_error('not enough balance') } 
+  end
+
   describe '#touch_out' do
-    it 'changes the value of in_journey back to false' do
-      allow(subject).to receive(:minimum_balance?).and_return false
+    before do
+      subject.top_up(maximum_limit)
       subject.touch_in(entry_station)
+    end  
+
+    it 'changes the value of in_journey back to false' do
       subject.touch_out(exit_station)
       expect(subject.in_journey?).to be false
     end 
 
     it 'deducts the minimum charge from the card' do
-      allow(subject).to receive(:minimum_balance?).and_return false
-      subject.touch_in(entry_station)
-      expect { subject.touch_out(exit_station) }.to change { subject.balance }.by(-OysterCard::MIN_FARE)
+      expect { subject.touch_out(exit_station) }.to change { subject.balance }.by(-minimum_fare)
     end
     
     it 'touch out stores the exit station value' do 
@@ -71,41 +71,13 @@ describe OysterCard do
     end
 
     it 'stores the journey in journey history' do
-      subject.top_up(10)
-      subject.touch_in(entry_station)
       subject.touch_out(exit_station)
       expect(subject.journeys).to include(journey)
     end
   end
 
-  it 'defauts the jouney history to empty' do
+  it 'defaults the jouney history to empty' do
     expect(subject.journeys).to be_empty
   end
 
 end
-
-
-
-# redundant tests
-  # describe '#max_limit?' do
-
-  #   it 'returns false when max_limit not reached' do
-  #     expect(subject.max_limit?).to be(false)
-  #   end
-
-    # it 'returns true when max_limit reached' do
-    #   card = subject
-    #   card.top_up(90)
-    #   card.top_up(1)
-    #   expect(card.max_limit?).to be(true)
-    # end
-  # end
-
-
-
-  # describe "#deduct" do
-  #   it 'deducts the balance' do
-  #     subject.top_up(50)
-  #     expect { subject.deduct(25) }.to change { subject.balance }.by(-25)
-  #   end
-  # end
